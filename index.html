@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Search Visualization</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 100%);
+        }
+
+        .container {
+            text-align: center;
+            padding: 30px;
+            background-color: #f7f9fc;
+            border-radius: 15px;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .array-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+            margin-bottom: 25px;
+        }
+
+        .array-element {
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            margin: 0 7px;
+            background-color: #8e44ad;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            border-radius: 8px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .array-element.highlighted {
+            transform: scale(1.3);
+        }
+
+        .controls {
+            margin-bottom: 25px;
+        }
+
+        input {
+            padding: 12px;
+            font-size: 18px;
+            margin-right: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            width: 220px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 18px;
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1c5985;
+        }
+
+        .complexity-info, .message {
+            font-size: 20px;
+            margin-top: 25px;
+        }
+
+        .message {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Binary Search Visualization</h1>
+        <div class="array-container" id="array-container"></div>
+        <div class="controls">
+            <input type="number" id="search-value" placeholder="Enter value to search" required>
+            <button onclick="startSearch()">Start Search</button>
+        </div>
+        <div class="complexity-info">
+            <strong>Current Time Complexity:</strong> <span id="complexity">O(log n)</span>
+        </div>
+        <div class="message" id="message"></div>
+    </div>
+    <script>
+        const array = [2, 5, 8, 12, 16, 23, 38, 45, 56, 72, 91];
+        const arrayContainer = document.getElementById('array-container');
+        const complexityDisplay = document.getElementById('complexity');
+        const messageDisplay = document.getElementById('message');
+
+        function displayArray() {
+            arrayContainer.innerHTML = '';
+            array.forEach((value, index) => {
+                const element = document.createElement('div');
+                element.className = 'array-element';
+                element.id = `element-${index}`;
+                element.textContent = value;
+                arrayContainer.appendChild(element);
+            });
+        }
+
+        function highlightElement(index, color) {
+            const element = document.getElementById(`element-${index}`);
+            element.style.backgroundColor = color;
+            if (color !== '#8e44ad') {
+                element.classList.add('highlighted');
+            } else {
+                element.classList.remove('highlighted');
+            }
+        }
+
+        async function binarySearch(arr, target) {
+            let left = 0;
+            let right = arr.length - 1;
+
+            complexityDisplay.textContent = `O(log n)`;
+
+            while (left <= right) {
+                const mid = Math.floor((left + right) / 2);
+                highlightElement(mid, '#f39c12');
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                if (arr[mid] === target) {
+                    highlightElement(mid, '#27ae60');
+                    messageDisplay.textContent = `Element found at index ${mid}`;
+                    return mid;
+                } else if (arr[mid] < target) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+
+                highlightElement(mid, '#8e44ad');
+            }
+            messageDisplay.textContent = "The element is not found in the array";
+            return -1;
+        }
+
+        function startSearch() {
+            messageDisplay.textContent = '';
+            displayArray();
+            const value = parseInt(document.getElementById('search-value').value);
+            if (!isNaN(value)) {
+                binarySearch(array, value);
+            }
+        }
+
+        displayArray();
+    </script>
+</body>
+</html>
